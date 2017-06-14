@@ -28,14 +28,13 @@ On the other hand it is not easy to perform repeatedly queries against such huge
 The Fast Data Lake Processing aim to solve those problems. 
  
 #### Applicability 
-
-Use fast data lake processing when
+when do you need it?  Use fast data lake processing when:
 * Insights can give you business advantage.
-* Paying performance penalty for those insights are not acceptable.
-* Analysis/Insights is done on medium data size.
-* The amount and insensitivity of the insights harvesting is unknown or has big variation, and insights time should be near real time.
-* It is possible to derive the insights from data that is couple of hours dated.
-* The insights is best extract from some derivation of the live data. 
+* Paying real-time operational performance penalty for those insights is not acceptable.
+* Analysis/insights are executed on medium data size
+* The amount and intensity of the insights harvested is unknown or has big variation, and insights time should be near real time.
+* It is acceptable to derive the insights from data that is a couple of hours dated and not in the moment
+* The insights requires some type of modification/pre-processing on the live data.
 
 #### Structure 
 
