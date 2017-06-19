@@ -71,7 +71,7 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 
 #### Sample Code
 
-example of Spark code which reads data from "postgresql" into XAP's grid.
+Example of InsightEdge code which reads data from "postgresql" into XAP's grid using spark SQL.
 download zepplin's [notebook](https://github.com/InsightEdge/aa-helios.git)
 be aware in order to run the example' you required to configure postgresql.
 
