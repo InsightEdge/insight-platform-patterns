@@ -70,7 +70,7 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 5. It is very easy to write a reporting or UI on top of it.
 
 #### Sample Code
-#### Sample Code
+
 example of Spark code which reads data from "postgresql" into XAP's grid.
 download zepplin's notebook:
      *https://github.com/InsightEdge/aa-helios.git*
