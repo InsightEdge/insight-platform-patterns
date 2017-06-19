@@ -72,10 +72,10 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 #### Sample Code
 
 example of Spark code which reads data from "postgresql" into XAP's grid.
-download zepplin's notebook:
-     *https://github.com/InsightEdge/aa-helios.git*
+download zepplin's [notebook](https://github.com/InsightEdge/aa-helios.git)
 be aware in order to run the example' you required to configure postgresql.
 
+```Scala
     import org.apache.spark._
     import org.apache.spark.sql._
     import sqlContext.implicits._
@@ -98,6 +98,7 @@ be aware in order to run the example' you required to configure postgresql.
                   (endTimeDB3-startTimeDB3)/1000.0f);
     forecastResultRDD.saveToGrid();
         
+```
 
 #### Known Uses
 
