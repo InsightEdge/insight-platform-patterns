@@ -70,37 +70,34 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 5. It is very easy to write a reporting or UI on top of it.
 
 #### Sample Code
-* example of Spark code which reads data from "postgresql" into XAP's grid.
+#### Sample Code
+example of Spark code which reads data from "postgresql" into XAP's grid.
 download zepplin's notebook:
-     https://github.com/InsightEdge/aa-helios.git
-be aware in otder to make the example work you required to configure postgresql.
- 
+     *https://github.com/InsightEdge/aa-helios.git*
+be aware in order to run the example' you required to configure postgresql.
 
-
-import org.apache.spark._
-import org.apache.spark.sql._
-import sqlContext.implicits._
-import java.sql._
-
-val startTimeDB3 = System.currentTimeMillis();
-val forecastResultDataFrame = sqlContext
-  .load("jdbc", Map(
-  "url" -> "jdbc:postgresql://localhost/postgres?user=giga123&password=giga123",
-  "dbtable" -> "forecast_result"))
-var forecastResultRDD = forecastResultDataFrame.map(row =>  new ForecastResult(
-    row.getAs[Long]("routing_id"), 
-    row.getAs[Int]("status_code"),  
-    row.getAs[Int]("sponsor_code"),
-    row.getAs[Int]("sponsor_id"),  
-    row.getAs[Int]("num_observations")
-    ))
-forecastResultRDD.count()
-
-val endTimeDB3 = System.currentTimeMillis();
-println("--- Time took to get forecast_result data from DB in seconds=" + (endTimeDB3-startTimeDB3)/1000.0f);
-
-forecastResultRDD.saveToGrid();
-
+    import org.apache.spark._
+    import org.apache.spark.sql._
+    import sqlContext.implicits._
+    import java.sql._
+    
+    val startTimeDB3 = System.currentTimeMillis();
+    val forecastResultDataFrame = sqlContext.load("jdbc", Map(
+                  "url" -> "jdbc:postgresql://localhost/postgres?user=giga123&password=giga123","dbtable" -> "forecast_result"))
+    var forecastResultRDD = forecastResultDataFrame.map(row =>  new 
+             ForecastResult(
+                row.getAs[Long]("routing_id"), 
+                row.getAs[Int]("status_code"),  
+                row.getAs[Int]("sponsor_code"),
+                row.getAs[Int]("sponsor_id"),  
+                row.getAs[Int]("num_observations")
+        ))
+    forecastResultRDD.count()
+    val endTimeDB3 = System.currentTimeMillis();
+    println("--- Time took to get forecast_result data from DB in seconds=" + 
+                  (endTimeDB3-startTimeDB3)/1000.0f);
+    forecastResultRDD.saveToGrid();
+        
 
 #### Known Uses
 
