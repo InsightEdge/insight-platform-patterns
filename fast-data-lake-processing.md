@@ -81,7 +81,7 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 2. Use Java Client that change the data
 3. Use Spark API
 
-###### You have the following options for perform analitic and machine learning on the fast data lake
+###### You have the following options for perform analytic and machine learning on the fast data lake
 1. Using the grid aggregations commands
 2. Using python via Spark Notebook
 3. Using Spark Notebook as a UI
@@ -89,9 +89,9 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 
 #### Sample Code
 
-##### Example 1 Loading data from data lake to grid using Spark SQL.
+##### Example Loading data from data lake to grid using Spark SQL.
 Example of InsightEdge code which reads data from "postgresql" into XAP's grid using spark SQL.
-download zepplin's [notebook](https://github.com/InsightEdge/aa-helios.git)
+download zepplin's [Notebook](https://github.com/InsightEdge/aa-helios.git)
 be aware in order to run the example' you required to configure postgresql.
 
 ```Scala
@@ -124,6 +124,10 @@ be aware in order to run the example' you required to configure postgresql.
                   (endTimeDB3-startTimeDB3)/1000.0f)
         
 ```
+##### Example Loading data from data lake to grid external java client and write multiple.
+
+##### Example Loading data from data lake to grid embedded processing unit.
+
 
 #### Known Uses
 
