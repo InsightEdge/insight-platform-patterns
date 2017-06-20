@@ -29,24 +29,24 @@ The Fast Data Lake Processing aim to solve those problems.
  
 #### Applicability 
 when do you need it?  Use fast data lake processing when:
-* Insights can give you business advantage.
-* Paying real-time operational performance penalty for those insights is not acceptable.
+* Insights can give you business advantage
+* Paying real-time operational performance penalty for those insights is not acceptable
 * Analysis/insights are executed on medium data size
-* The amount and intensity of the insights harvested is unknown or has big variation, and insights time should be near real time.
+* The amount and intensity of the insights harvested is unknown or has big variation, and insights time should be near real time
 * It is acceptable to derive the insights from data that is a couple of hours dated and not in the moment
-* The insights requires some type of modification/pre-processing on the live data.
+* The insights requires some type of modification/pre-processing on the live data
 
 #### Structure 
 
-1. Extract the selected data to an schema side reservoir from the data lake, fold and index the data on the fly if needed.
-2. On the side reservoir perform the needed analysis, queries or machine learning as much as needed.
+1. Extract the selected data to an schema side reservoir from the data lake, fold and index the data on the fly if needed
+2. On the side reservoir perform the needed analysis, queries or machine learning as much as needed
 3. Repeat 1 and 2 as needed.
 
 #### Participants
 
 * business online transaction system that can be
     * Legacy database
-    * Some kind of Enterprise server.
+    * Some kind of Enterprise server
     * In memory technology
 * Data Lake that can be Amazon S3, HDFS or similar technologies.
 * A side reservoir serve as the fast data lake processing, this system should have the capability to run fast the analytic on its data and derive the insights, it should also be possible to fast ingest the data from the data lake to this reservoir.
@@ -63,29 +63,29 @@ If implemented correctly fast data lake processing can provide fast insights for
 #### Implementation
 
 In Memory Data Grid technology is a natural candidate to serve as the side reservoir, because:
-1. It is very fast, in processing and ingest.
-2. It enable complicated business related mutation on the data even after the data was ingests.
-3. I can support Machine Learning.
-4. It is support rich query language.
-5. It is very easy to write a reporting or UI on top of it.
+1. It is very fast, in processing and ingest
+2. It enable complicated business related mutation on the data even after the data was ingests
+3. I can support Machine Learning
+4. It is support rich query language
+5. It is very easy to write a reporting or UI on top of it
 
 ##### Specifically with Gigaspaces [InsightEdge](https://insightedge.io/)
 
 ###### You have the following options for ingesting the data from the data lake to the grid
-1. User Spark SQL to read RDD from JDBC data source filter and mutate the RDD and at the end save to the grid.
-2. Use Java Client to read from the Data Lake and write to the grid using Write Multiple.
-3. Write a specific [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that load for each partition only its data, this can be very very fast.
+1. User Spark SQL to read RDD from JDBC data source filter and mutate the RDD and at the end save to the grid
+2. Use Java Client to read from the Data Lake and write to the grid using Write Multiple
+3. Write a specific [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that load for each partition only its data, this can be very very fast
 
 ###### You have the following options for mutating and enriching the data after it is in the grid
-1. Write a [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that mutate the data on events.
-2. Use Java Client that change the data.
+1. Write a [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that mutate the data on events
+2. Use Java Client that change the data
 3. Use Spark API
 
 ###### You have the following options for perform analitic and machine learning on the fast data lake
-1. Using the grid aggregations commands.
+1. Using the grid aggregations commands
 2. Using python via Spark Notebook
-3. Using Spark Notebook as a UI.
-4. Using Spark Machine Learning. 
+3. Using Spark Notebook as a UI
+4. Using Spark Machine Learning 
 
 #### Sample Code
 
