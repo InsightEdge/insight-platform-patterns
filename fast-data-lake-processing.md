@@ -18,7 +18,7 @@ In situation when performance penalty to the business transaction as a result of
 
 As a result there is a pattern that called [Data Lake](https://en.wikipedia.org/wiki/Data_lake). 
 Basically Data Lake is a huge reservoir of data in various structure (some it may be even unstructured)  
-[Stein, Brian; Morrison, Alan (2014)](http://www.pwc.com/en_US/us/technology-forecast/2014/cloud-computing/assets/pdf/pwc-technology-forecast-data-lakes.pdf) advise that "The main challenge is not creating a data lake, but taking advantage of the opportunities it presents."
+[Stein, Brian; Morrison, Alan (2014)](http://www.pwc.com/en_US/us/technoindicescast/2014/cloud-computing/assets/pdf/pwc-technology-forecast-data-lakes.pdf) advise that "Thanalytichallenge is not creating a data lake, but taking advantage of the opportunities it presents."
 
 Consider a situation when insights can save lots of money but a the a delay in the business transaction is very costly, for example when computing flights schedule or when doing online trading.
 The essence of those business is built on good insights, but this insights can not compete or delay the business transactions.
@@ -69,8 +69,27 @@ In Memory Data Grid technology is a natural candidate to serve as the side reser
 4. It is support rich query language.
 5. It is very easy to write a reporting or UI on top of it.
 
+##### Specifically with Gigaspaces [InsightEdge](https://insightedge.io/)
+
+###### You have the following options for ingesting the data from the data lake to the grid
+1. User Spark SQL to read RDD from JDBC data source filter and mutate the RDD and at the end save to the grid.
+2. Use Java Client to read from the Data Lake and write to the grid using Write Multiple.
+3. Write a specific [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that load for each partition only its data, this can be very very fast.
+
+###### You have the following options for mutating and enriching the data after it is in the grid
+1. Write a [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that mutate the data on events.
+2. Use Java Client that change the data.
+3. Use Spark API
+
+###### You have the following options for perform analitic and machine learning on the fast data lake
+1. Using the grid aggregations commands.
+2. Using python via Spark Notebook
+3. Using Spark Notebook as a UI.
+4. Using Spark Machine Learning. 
+
 #### Sample Code
 
+##### Example 1 Loading data from data lake to grid using Spark SQL.
 Example of InsightEdge code which reads data from "postgresql" into XAP's grid using spark SQL.
 download zepplin's [notebook](https://github.com/InsightEdge/aa-helios.git)
 be aware in order to run the example' you required to configure postgresql.
@@ -81,22 +100,28 @@ be aware in order to run the example' you required to configure postgresql.
     import sqlContext.implicits._
     import java.sql._
     
-    val startTimeDB3 = System.currentTimeMillis();
-    val forecastResultDataFrame = sqlContext.load("jdbc", Map(
+    val startTimeDB3 = System.currentTimeMillis()
+    // Read data from postgress using spark jdbc
+    val resultDataFrame = sqlContext.load("jdbc", Map(
                   "url" -> "jdbc:postgresql://localhost/postgres?user=giga123&password=giga123","dbtable" -> "forecast_result"))
-    var forecastResultRDD = forecastResultDataFrame.map(row =>  new 
-             ForecastResult(
+    // Define the schema for this data.              
+    var resultRDD = resultDataFrame.map(row =>  new 
+             Result(
                 row.getAs[Long]("routing_id"), 
                 row.getAs[Int]("status_code"),  
                 row.getAs[Int]("sponsor_code"),
                 row.getAs[Int]("sponsor_id"),  
                 row.getAs[Int]("num_observations")
         ))
-    forecastResultRDD.count()
-    val endTimeDB3 = System.currentTimeMillis();
-    println("--- Time took to get forecast_result data from DB in seconds=" + 
-                  (endTimeDB3-startTimeDB3)/1000.0f);
-    forecastResultRDD.saveToGrid();
+        
+    // here should be the code that filter and mutate the RDD
+        
+    // save the RDD to the date grid, note that if the Result object defined with indices those indices will be used to fetch the data from the grid
+    // and on all the following analytics queries. 
+    resultRDD.saveToGrid() 
+    val endTimeDB3 = System.currentTimeMillis()
+    println("--- Time took to get result data from DB in seconds=" + 
+                  (endTimeDB3-startTimeDB3)/1000.0f)
         
 ```
 
