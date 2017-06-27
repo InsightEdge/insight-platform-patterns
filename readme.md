@@ -1,3 +1,3 @@
 ## Insight Platform Patterns
 
-1. [Fast Data Lake Processing](fast-data-lake-processing.md)
+1. [Fast Data Lake](fast-data-lake.md)

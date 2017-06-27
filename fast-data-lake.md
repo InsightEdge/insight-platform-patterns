@@ -1,135 +1,125 @@
+### Fast Data Lake 
 
-### Fast Data Lake Processing
 
 #### Intent
-
-Define a way to repeatably compute insights based on (live) business data without adding performance 
-cost on the business transaction process.
-
-
-#### Also Known 
+Define a way to consistently compute insights based on (live) business data without creating performance cost on the business transaction process.
+ 
+ 
+#### Also Known As 
 Live operational database
- 
+
+
 #### Motivation 
+In today’s business environment, there is an increasing need for insights that are derived from historical and present data.  These requirements usually compete with the need for fast business transaction processing because both systems use the same resources.
+Some examples of segments where business transaction speed is vital for efficient operations and business success include: flight scheduling, on-line trading, banking, e-commerce and more.
 
-In today business there is a great need for insights that computed base on the history and present state of the system.
-Most of the time this needs is in competition with the need for fast business transaction processing because both system use the same resources.  
-In situation when performance penalty to the business transaction as a result of the insight computation is not acceptable a data lake is a good solution.
+One way to store data for analytical analysis is implement a data lake.
+[Data Lake](https://en.wikipedia.org/wiki/Data_lake) is a huge reservoir of data in various structures (some may be even unstructured) that are saved quickly in their natural  format that facilitates the collocation of data in various schemata and structural forms
+The idea of data lake is to have a single store of all data in the enterprise ranging from raw data (which implies exact copy of source system data) to transformed data which is used for various tasks including reporting, visualization, analytics and machine learning. 
 
-As a result there is a pattern that called [Data Lake](https://en.wikipedia.org/wiki/Data_lake). 
-Basically Data Lake is a huge reservoir of data in various structure (some it may be even unstructured)  
-[Stein, Brian; Morrison, Alan (2014)](http://www.pwc.com/en_US/us/technoindicescast/2014/cloud-computing/assets/pdf/pwc-technology-forecast-data-lakes.pdf) advise that "Thanalytichallenge is not creating a data lake, but taking advantage of the opportunities it presents."
+However, it is challenging to leverage data lakes in an efficient manner due to the large amounts of data along with the lack of uniform schema. Performing repeated queries against huge amounts of unstructured data can take a long time to execute.
 
-Consider a situation when insights can save lots of money but a the a delay in the business transaction is very costly, for example when computing flights schedule or when doing online trading.
-The essence of those business is built on good insights, but this insights can not compete or delay the business transactions.
+[Stein, Brian; Morrison, Alan (2014)](http://www.pwc.com/en_US/us/technoindicescast/2014/cloud-computing/assets/pdf/pwc-technology-forecast-data-lakes.pdf)  advise that "The analytics challenge is not creating a data lake, but taking advantage of the opportunities it presents."
 
-Thus using a regular HTAP and computing the insights on the live data is too risky.
-On the other hand it is not easy to perform repeatedly queries against such huge amount of unstructured data, a naive query will take very long time to execute.
-The Fast Data Lake Processing aim to solve those problems. 
- 
+A Fast Data Lake will solve the query latency challenge.
+
+
 #### Applicability 
-when do you need it?  Use fast data lake processing when:
-* Insights can give you business advantage
+Fast data lake is beneficial when:
+* Analytical insights can give you business advantage
 * Paying real-time operational performance penalty for those insights is not acceptable
-* Analysis/insights are executed on medium data size
-* The amount and intensity of the insights harvested is unknown or has big variation, and insights time should be near real time
-* It is acceptable to derive the insights from data that is a couple of hours dated and not in the moment
-* The insights requires some type of modification/pre-processing on the live data
+* Analysis/insights are executed on medium data size (up to ~2 PTB)
+* You require flexibility concerning the types of analysis that are supported
+* The query response time must be “fast”
+* It is acceptable to derive insights from data that is dated (according to business specification) and not necessarily in real-time
 
 #### Structure 
-
-1. Extract the selected data to an schema side reservoir from the data lake, fold and index the data on the fly if needed
-2. On the side reservoir perform the needed analysis, queries or machine learning as much as needed
-3. Repeat 1 and 2 as needed.
+1. Extract the selected data from the data lake, transform the data to the appropriate structure according to the expected queries and save it in a medium that supports queries. 
+2. The required analysis, queries or machine learning are run on the transformed data
+2. Repeat 1 and 2 as required. The new transformed data will replace the existing data.
+ 
 
 #### Participants
-
-* business online transaction system that can be
-    * Legacy database
-    * Some kind of Enterprise server
-    * In memory technology
-* Data Lake that can be Amazon S3, HDFS or similar technologies.
-* A side reservoir serve as the fast data lake processing, this system should have the capability to run fast the analytic on its data and derive the insights, it should also be possible to fast ingest the data from the data lake to this reservoir.
-* Some kind of transformer that fill the selected items from the data lake to the side reservoir, this transformer should be able to do both filtering the data and mutate it on the way as well as index it for fast queries if needed.
-   
-It is important that the transformer will be fast as it can be since it eat analysis time.
+* Business online transaction systems such as:
+  * Legacy database
+  * Enterprise server
+  * In-memory technology
+* Data lake that such as:
+  * Amazon S3
+  * HDFS or similar technologies
+* A medium serving as a fast data lake that supports:
+  * Fast analytics and insights 
+  * Fast data ingestion from the data lake
+  * Data streamer to quickly move data from the data lake to the medium
+	Note that analysis time is influenced by the streaming speed.
+  
 
 #### Collaborations
+ 
 
 #### Consequences
-
-If implemented correctly fast data lake processing can provide fast insights for the business with very small and controlled overhead (because of the schema, indices and the pre processing) on near live business system.
-
+If implemented correctly fast data lake processing will provide fast insights (resulting from the schema, indices and the pre-processing) accompanied with a very small and controlled overhead (streaming time and frequency) on the business transactional environment.
+ 
 #### Implementation
+In Memory Data Grid technology is a natural candidate to serve as the medium for the fast data lake because it:
+1. Ingests and processes data very fast 
+2. Enables complicated business-related data transformation during and after ingestion
+3. Supports machine learning
+4. Supports rich query language
+5. Makes reporting and visualization easy
 
-In Memory Data Grid technology is a natural candidate to serve as the side reservoir, because:
-1. It is very fast, in processing and ingest
-2. It enable complicated business related mutation on the data even after the data was ingests
-3. I can support Machine Learning
-4. It is support rich query language
-5. It is very easy to write a reporting or UI on top of it
-
-##### Specifically with Gigaspaces [InsightEdge](https://insightedge.io/)
-
-###### You have the following options for ingesting the data from the data lake to the grid
-1. User Spark SQL to read RDD from JDBC data source filter and mutate the RDD and at the end save to the grid
-2. Use Java Client to read from the Data Lake and write to the grid using Write Multiple
-3. Write a specific [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that load for each partition only its data, this can be very very fast
-
-###### You have the following options for mutating and enriching the data after it is in the grid
-1. Write a [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that mutate the data on events
-2. Use Java Client that change the data
-3. Use Spark API
-
-###### You have the following options for perform analytic and machine learning on the fast data lake
-1. Using the grid aggregations commands
-2. Using python via Spark Notebook
-3. Using Spark Notebook as a UI
-4. Using Spark Machine Learning 
-
-#### Sample Code
-
-##### Example Loading data from data lake to grid using Spark SQL.
-Example of InsightEdge code which reads data from "postgresql" into XAP's grid using spark SQL.
+Implementation with GigaSpaces[InsightEdge](https://insightedge.io/)
+ 
+The following options are available for data streaming from the data lake to the GigaSpaces IMG
+1. Use Apache Spark to read data from the data lake as an RDD, which can be filtered and transformed and then saved to the grid.
+2. Use Java Client to read from the data lake, filter and transform the data and then save to the grid using XAP API
+3. Write a specific [Processing Unit](https://docs.gigaspaces.com/xap/12.1/dev-java/the-processing-unit-overview.html) that reads the specific data that is needed for each partition from the data lake, filters and transforms the data and then saves it to the grid
+ 
+The following options are available for performing analytics and machine learning on the fast data lake:
+1. Grid aggregation commands
+2. Python via Spark Notebook
+3. Spark Notebook as a UI
+4. Spark Machine Learning 
+ 
+Sample Code
+ 
+##### Example of loading data from the data lake to the grid using Spark SQL
+Example of InsightEdge code which reads data from "postgresql" into XAP's grid using Spark SQL.
 download zepplin's [Notebook](https://github.com/InsightEdge/aa-helios.git)
-be aware in order to run the example' you required to configure postgresql.
-
+Note that in order to run the example, you must configure postgresql.
+ 
 ```Scala
-    import org.apache.spark._
-    import org.apache.spark.sql._
-    import sqlContext.implicits._
-    import java.sql._
-    
-    val startTimeDB3 = System.currentTimeMillis()
-    // Read data from postgress using spark jdbc
-    val resultDataFrame = sqlContext.load("jdbc", Map(
-                  "url" -> "jdbc:postgresql://localhost/postgres?user=giga123&password=giga123","dbtable" -> "forecast_result"))
-    // Define the schema for this data.              
-    var resultRDD = resultDataFrame.map(row =>  new 
-             Result(
-                row.getAs[Long]("routing_id"), 
-                row.getAs[Int]("status_code"),  
-                row.getAs[Int]("sponsor_code"),
-                row.getAs[Int]("sponsor_id"),  
-                row.getAs[Int]("num_observations")
-        ))
-        
-    // here should be the code that filter and mutate the RDD
-        
-    // save the RDD to the date grid, note that if the Result object defined with indices those indices will be used to fetch the data from the grid
-    // and on all the following analytics queries. 
-    resultRDD.saveToGrid() 
-    val endTimeDB3 = System.currentTimeMillis()
-    println("--- Time took to get result data from DB in seconds=" + 
-                  (endTimeDB3-startTimeDB3)/1000.0f)
-        
+   import org.apache.spark._
+   import org.apache.spark.sql._
+   import sqlContext.implicits._
+   import java.sql._
+   
+   val startTimeDB3 = System.currentTimeMillis()
+   // Read data from postgress using spark jdbc
+   val resultDataFrame = sqlContext.load("jdbc", Map(
+                 "url" -> "jdbc:postgresql://localhost/postgres?user=giga123&password=giga123","dbtable" -> "forecast_result"))
+   // Define the schema for this data.              
+   var resultRDD = resultDataFrame.map(row =>  new 
+            Result(
+               row.getAs[Long]("routing_id"), 
+               row.getAs[Int]("status_code"), 
+               row.getAs[Int]("sponsor_code"),
+               row.getAs[Int]("sponsor_id"), 
+               row.getAs[Int]("num_observations")
+       ))
+       
+   // Place here, the code that filters and transforms the RDD
+       
+   // save the RDD to the date grid, note that if the Result object defined with indices those indices will be used to fetch the data from the grid
+   // and on all the following analytics queries. 
+   resultRDD.saveToGrid() 
+   val endTimeDB3 = System.currentTimeMillis()
+   println("--- Time took to get result data from DB in seconds=" + 
+                 (endTimeDB3-startTimeDB3)/1000.0f)
 ```
-##### Example Loading data from data lake to grid external java client and write multiple.
-
-##### Example Loading data from data lake to grid embedded processing unit.
-
-
+ 
 #### Known Uses
-
+ 
 #### Related Patterns
 HTAP
+
